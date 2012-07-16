@@ -48,7 +48,7 @@ set history=700
 
 " Enable filetype plugins
 filetype plugin on
-filetype indent on
+filetype indent off
 
 " Set to auto read when a file is changed from the outside
 set autoread
@@ -115,6 +115,21 @@ set noerrorbells
 set novisualbell
 set t_vb=
 set tm=500
+set nohlsearch " no highlight search results
+
+" Comment/Uncomment for different languages
+au FileType haskell,vhdl,ada            let comment = '-- '
+au FileType sh,make<Plug>PeepOpenython,ruby         let comment = '# '
+au FileType c,cpp,java,javascript       let comment = '// '
+au FileType tex                         let comment = '% '
+au FileType vim                         let comment = '" '
+
+ " Comment Blocks
+ " ,c -> comment selected
+ " " ,u -> uncomment selected
+ noremap <silent> ,c :s,^,<C-R>=comment<CR>,<CR>:noh<CR>
+ noremap <silent> ,u :s,^\V<C-R>=comment<CR>,,e<CR>:noh<CR>
+
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -275,8 +290,12 @@ func! DeleteTrailingWS()
   %s/\s\+$//ge
   exe "normal `z"
 endfunc
-autocmd BufWrite *.py :call DeleteTrailingWS()
-autocmd BufWrite *.coffee :call DeleteTrailingWS()
+
+autocmd BufWrite :call DeleteTrailingWS()
+
+
+" ,a -> clean all trailing spaces
+noremap <silent> ,a :call DeleteTrailingWS()<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
